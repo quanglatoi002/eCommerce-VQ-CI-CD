@@ -1,8 +1,10 @@
 const { createClient } = require("redis");
 
 const client = createClient({
-    host: "127.0.0.1",
-    port: 6379,
+    socket: {
+        host: "redis-15002.c274.us-east-1-3.ec2.cloud.redislabs.com",
+        port: 15002,
+    },
 });
 
 client.on("ready", () => {
