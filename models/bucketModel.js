@@ -5,10 +5,10 @@ const bucketSchema = new mongoose.Schema({
     maxPrice: Number,
     products: [
         {
-            type: mongoose.Schema.Types.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: "Product",
         },
     ],
 });
 
-const Bucket = mongoose.model("Bucket", bucketSchema);
+module.exports = mongoose.model("Bucket", bucketSchema);

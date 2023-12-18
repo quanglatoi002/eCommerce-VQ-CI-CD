@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const dbConnect = require("./config/dbConnect");
-// const clientRedis = require("./config/connections_redis");
+const clientRedis = require("./config/connections_redis");
 const redis = require("redis");
 const subscriber = redis.createClient();
 const app = express();

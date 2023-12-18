@@ -1,4 +1,5 @@
 const Product = require("../models/productModel");
+const Bucket = require("../models/bucketModel");
 const User = require("../models/userModel");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
@@ -83,6 +84,7 @@ const getAllProduct = asyncHandler(async (req, res) => {
         const queryObj = { ...req.query };
         const excludeFields = ["page", "sort", "limit", "fields"];
         console.log(queryObj);
+        // console.log("price", queryObj);
         excludeFields.forEach((e) => delete queryObj[e]);
         //chuyển sang JSON để phù hợp với $gte
         let queryStr = JSON.stringify(queryObj);
@@ -91,11 +93,13 @@ const getAllProduct = asyncHandler(async (req, res) => {
             (match) => `$${match}`
         );
 
-        console.log(queryStr);
-
         let query = Product.find(JSON.parse(queryStr));
-
         //sorting
+        // if (req.query.minPrice && req.query.maxPrice) {
+        //     query = await Bucket.find(JSON.parse(queryStr));
+        //     console.log("price", query);
+        // }
+
         if (req.query.sort) {
             const sortBy = req.query.sort.split(",").join(" ");
             query = query.sort(sortBy);
