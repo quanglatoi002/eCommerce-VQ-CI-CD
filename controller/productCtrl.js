@@ -1,11 +1,12 @@
 const Product = require("../models/productModel");
-const Bucket = require("../models/bucketModel");
+// const Bucket = require("../models/bucketModel");
 const User = require("../models/userModel");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
 const validateMongoDbId = require("../utils/validateMongodbId");
 const DatabaseFacade = require("../utils/patterns");
 const Size = require("../models/SizeModel");
+const { getProductBuckets } = require("./bucketCtrl");
 
 const createProduct = asyncHandler(async (req, res) => {
     try {
@@ -82,7 +83,14 @@ const getAllProduct = asyncHandler(async (req, res) => {
     try {
         //filtering
         const queryObj = { ...req.query };
-        const excludeFields = ["page", "sort", "limit", "fields"];
+        const excludeFields = [
+            "page",
+            "sort",
+            "limit",
+            "fields",
+            "minPrice",
+            "maxPrice",
+        ];
         console.log(queryObj);
         // console.log("price", queryObj);
         excludeFields.forEach((e) => delete queryObj[e]);
@@ -94,6 +102,15 @@ const getAllProduct = asyncHandler(async (req, res) => {
         );
 
         let query = Product.find(JSON.parse(queryStr));
+
+        if (req.query.minPrice || req.query.maxPrice) {
+            const products = await getProductBuckets(req, res);
+            return products;
+        }
+        console.log(query);
+        // if (req.query.minPrice || req.query.maxPrice) {
+        //     query = getProductBuckets();
+        // }
         //sorting
         // if (req.query.minPrice && req.query.maxPrice) {
         //     query = await Bucket.find(JSON.parse(queryStr));

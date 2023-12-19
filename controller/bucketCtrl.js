@@ -70,22 +70,60 @@ const createProductBuckets = asyncHandler(async (req, res) => {
 const getProductBuckets = asyncHandler(async (req, res) => {
     try {
         const { minPrice, maxPrice } = req.query;
-        // tìm bucket
-        const bucket = await Bucket.find({
-            minPrice: { $lte: minPrice },
-            maxPrice: { $gt: maxPrice },
-        });
 
-        if (!bucket) {
+        // if (!minPrice || !maxPrice)
+        //     throw new Error("Invalid minPrice or maxPrice");
+        console.log(minPrice);
+
+        const maxPriceBucket = 5000; // Giả sử giá sản phẩm từ 0 đến 1000
+        const numberOfBuckets = 10; // Số lượng bucket (khoảng giá) bạn muốn chia dữ liệu thành
+
+        const resultBuckets = +(maxPriceBucket / numberOfBuckets);
+
+        // nếu user chỉ nhập minPrice mà ko nhập đơn giá thì code sẽ sai
+        // const buckets = await Bucket.find({
+        //     minPrice: { $gte: minPrice },
+        //     maxPrice: { $lte: maxPrice },
+        // });
+
+        // minPrice
+        const searchPrice = {};
+
+        // min = 300 thì nó sẽ lấy bd từ 500-1000 mà không luôn vị trí ở ngay nó
+        if (minPrice) {
+            searchPrice.minPrice = { $gte: minPrice - resultBuckets };
+        }
+        // 900 + 500 -> mốc 1k
+        //400 + 500 -> 500
+        if (maxPrice) {
+            searchPrice.maxPrice = { $lt: Number(maxPrice) + resultBuckets };
+        }
+
+        console.log(searchPrice.maxPrice);
+
+        // tìm bucket
+        const buckets = await Bucket.find(searchPrice);
+
+        console.log("bucket", buckets);
+        if (!buckets || buckets.length === 0) {
             return res
                 .status(404)
                 .json({ message: "No products found for the given price" });
         }
 
-        const products = await Product.find({ _id: { $in: bucket.products } });
+        // nếu bucket nhiều sản phẩm
+        const productIds = buckets.reduce((acc, bucket) => {
+            acc.push(...bucket.products);
+            return acc;
+        }, []);
+        console.log(productIds);
+
+        const products = await Product.find({ _id: { $in: productIds } });
 
         res.json(products);
-    } catch (error) {}
+    } catch (error) {
+        console.error(error);
+    }
 });
 
 module.exports = {

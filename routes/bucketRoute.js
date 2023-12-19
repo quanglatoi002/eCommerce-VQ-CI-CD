@@ -9,4 +9,5 @@ router.post(
     [authMiddleware, isAdmin],
     ctrlc.createProductBuckets
 );
+router.get("/get-buckets", ctrlc.getProductBuckets);
 module.exports = router;
