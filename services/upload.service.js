@@ -38,7 +38,7 @@ const updateImageFromLocalS3 = async ({ file }) => {
         const url = getSignedUrl({
             url: `${urlImagePublic}/${imageName}`,
             keyPairId: process.env.AWS_PUBLIC_KEY_ID_CLOUD_FRONT,
-            dateLessThan: new Date(Date.now() + 1000 * 60 * 60 * 24),
+            dateLessThan: new Date(Date.now() + 1000 * 60 * 60 * 24 * 12),
             privateKey: process.env.AWS_BUCKET_PUBLIC_KEY_ID,
         });
 
