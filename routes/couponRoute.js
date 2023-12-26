@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.post("/", [authMiddleware, isAdmin], ctrlc.createCoupon);
 router.get("/", [authMiddleware, isAdmin], ctrlc.getAllCoupons);
+router.post("/coupon", ctrlc.getACoupon);
 router.put("/:id", [authMiddleware, isAdmin], ctrlc.updateCoupon);
 router.delete("/:id", [authMiddleware, isAdmin], ctrlc.deleteCoupon);
 
