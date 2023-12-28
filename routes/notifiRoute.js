@@ -4,6 +4,7 @@ const { authMiddleware, isAdmin } = require("../middlewares/authMiddleware");
 const router = express.Router();
 const redis = require("redis");
 const client = redis.createClient();
+// const clientRedis = require("../config/connections_redis");
 
 router.post("/", async (req, res) => {
     //đợi admin gửi message

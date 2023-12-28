@@ -45,8 +45,10 @@ const requestLimitMiddleware = async (req, res, next) => {
         } else {
             _ttl = await ttl(getIpUser);
         }
+
+        const REQUEST = 20;
         // nếu quá số lần req...
-        if (numRequest > 20) {
+        if (numRequest > REQUEST) {
             return res.status(503).json({
                 status: "error",
                 _ttl,

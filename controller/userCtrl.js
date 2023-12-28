@@ -16,6 +16,8 @@ const sendMessageToQueue = require("../tests/message_queue/rabbitmq/ordered.prod
 const redisClient = redis.createClient();
 // *validation client side
 
+// const clientRedis = require("../config/connections_redis");
+
 //create User
 const createUser = asyncHandler(async (req, res) => {
     const email = req.body?.email;
@@ -209,6 +211,7 @@ const getaUser = asyncHandler(async (req, res) => {
 
     try {
         const getaUser = await User.findById(id);
+        console.log(getaUser);
         res.json(getaUser);
     } catch (error) {
         throw new Error(error);
@@ -417,12 +420,13 @@ const emptyCart = asyncHandler(async (req, res) => {
 const updateProductQuantityFromCart = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     const { cartItemId, newQuantity } = req.params;
+    console.log(newQuantity);
     validateMongoDbId(_id);
     try {
         const cartItem = await Cart.findOne({
             userId: _id,
             _id: cartItemId,
-        });
+        }).populate("productId");
         cartItem.quantity = newQuantity;
         cartItem.save();
         res.json(cartItem);
@@ -464,7 +468,7 @@ const createOrder = asyncHandler(async (req, res) => {
         totalPriceAfterDiscount,
         paymentInfo,
     } = req.body;
-    console.log(req.body.shoppingInfo);
+    // console.log(req.body.shoppingInfo);
     const { _id } = req.user;
     validateMongoDbId(_id);
 
@@ -480,7 +484,7 @@ const createOrder = asyncHandler(async (req, res) => {
 
         const order = await Order.create(infoOrder);
         // await sendMessageToQueue(infoOrder);
-        console.log("order 123", order);
+        // console.log("order 123", order);
 
         if (!order) throw new Error("Order not created");
 

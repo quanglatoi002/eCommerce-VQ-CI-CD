@@ -1,10 +1,14 @@
 const express = require("express");
 const ctrlc = require("../controller/productCtrl");
 const { authMiddleware, isAdmin } = require("../middlewares/authMiddleware");
+const {
+    requestLimitMiddleware,
+} = require("../middlewares/requestLimitMiddleware");
+
 const router = express.Router();
 
 router.post("/", authMiddleware, isAdmin, ctrlc.createProduct);
-router.get("/", ctrlc.getAllProduct);
+router.get("/", requestLimitMiddleware, ctrlc.getAllProduct);
 router.put("/wishlist", [authMiddleware, isAdmin], ctrlc.addToWishlist);
 router.put("/rating", [authMiddleware, isAdmin], ctrlc.ratings);
 router.get("/:id", ctrlc.getaProduct);

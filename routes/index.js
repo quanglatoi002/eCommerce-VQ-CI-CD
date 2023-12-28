@@ -11,6 +11,9 @@ const updateRouter = require("./uploadRoute");
 const notifiRouter = require("./notifiRoute");
 const bucketRouter = require("./bucketRoute");
 const { pushToLogDiscord } = require("../middlewares/loggers");
+const {
+    requestLimitMiddleware,
+} = require("../middlewares/requestLimitMiddleware");
 
 const initRoutes = (app) => {
     app.use(pushToLogDiscord);
