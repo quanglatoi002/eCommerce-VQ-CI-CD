@@ -16,6 +16,7 @@ const randomImageName = () => crypto.randomBytes(16).toString("hex");
 const imageName = randomImageName();
 
 const updateImageFromLocalS3 = async ({ file }) => {
+    console.log(file);
     try {
         const buffer = await sharp(file.buffer)
             .resize({

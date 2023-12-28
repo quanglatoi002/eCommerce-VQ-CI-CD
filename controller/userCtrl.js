@@ -482,6 +482,26 @@ const createOrder = asyncHandler(async (req, res) => {
             paymentInfo,
         };
 
+        // Kiểm tra lại 1 lần nữa nếu số lượng đặt hàng lớn hơn số lượng đang còn thì thông báo trả về/
+
+        // Nếu mua sản phẩm(lấy ra toàn bộ id của product)
+        const productIds = cartProductState.map((product) => product.product);
+        // find all products
+        const products = await Product.find({ _id: { $in: productIds } });
+
+        //Check số lượng sp có đủ ko?
+
+        const insufficientProducts = products.some((product) => {
+            const cartProduct = cartProductState.find(
+                (item) => item.product === product._id
+            );
+            return cartProduct && cartProduct.quantity > product.quantity;
+        });
+
+        // số lượng sp người mua > số lượng còn
+        if (insufficientProducts)
+            throw new Error("Number of insufficient products");
+
         const order = await Order.create(infoOrder);
         // await sendMessageToQueue(infoOrder);
         // console.log("order 123", order);
